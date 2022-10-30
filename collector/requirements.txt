@@ -1,1 +1,11 @@
-ccxt==2.0.71 
+boto3==1.23.9
+ccxt==2.0.71
+dataframe-image==0.1.1
+# kaleido==0.2.1
+# lxml==4.9.0
+matplotlib==3.5.2
+# numpy==1.22.4
+pandas==1.4.2
+# plotly==5.8.0
+psycopg2-binary==2.9.3
+python-telegram-bot==13.12
