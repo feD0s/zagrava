@@ -35,3 +35,11 @@ services:
     depends_on:
       - db
     restart: always
+
+  telegram_pnl:
+    container_name: telegram_pnl
+    build: ./telegram_pnl
+    command: bash -c "python3 main.py"
+    depends_on:
+      - db
+    restart: always
