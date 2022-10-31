@@ -9,4 +9,7 @@ During this technical assignment you would need to design and implement a backte
 
 ## 1. Solution analysis in jupyter notebook
 
-dsadas
+In 'notebook' folder there's file 'notebook.pynb' with simple solution. User strategy can be adjusted in 'strategy.yaml' and you also can change some parameters in config.yaml.
+
+## 2. Creating a service
+
