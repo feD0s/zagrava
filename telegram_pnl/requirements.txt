@@ -1,7 +1,6 @@
-ccxt==2.0.71
-dataframe-image==0.1.1
-matplotlib==3.5.2
-pandas==1.4.2
-psycopg2-binary==2.9.3
-python-telegram-bot==13.12
+ccxt==2.0.97
+matplotlib==3.6.1
+pandas==1.5.1
+psycopg2-binary==3.9.5
+python-telegram-bot==13.14
 PyYAML==6.0 
