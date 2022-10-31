@@ -16,7 +16,7 @@ In 'notebook' folder there's file 'notebook.pynb' with simple solution. User str
 After running docker-compose 4 counteiners will be built:<br/>
 1) postgresql_db - local postgres database for storing user strategies</br>
 2) pgadmin for viewing created tables</br>
-3) backtest_ui - web service where users can list, create, retrieve, update and delete user strategies. Service is made via fastAPI and React</br>
+3) backtest_ui - web service where users can list, create, retrieve, update and delete user strategies. Service is made via FastAPI and React</br>
 4) telegram_pnl - telegram bot where users can run commands to backtest strategies
 
 ## 3. Backtesting workflow
