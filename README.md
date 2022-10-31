@@ -9,7 +9,13 @@ During this technical assignment you would need to design and implement a backte
 
 ## 1. Solution analysis in jupyter notebook
 
-In 'notebook' folder there's file 'notebook.pynb' with simple solution. User strategy can be adjusted in 'strategy.yaml' and you also can change some parameters in config.yaml.
+In 'notebook' folder there's file 'notebook.pynb' with simple solution. User strategy can be adjusted in 'strategy.yaml' and you also can change some parameters in 'config.yaml'.
 
-## 2. Creating a service
+## 2. Service structure
+
+After running docker-compose 4 counteiners will be built:<br />
+1) postgresql_db - local postgres database for storing user strategies</br>
+2) pgadmin for viewing created tables</br>
+3) backtest_ui - web service where users can list, create, retrieve, update and delete user strategies. Service is made via fastAPI and React</br>
+4) telegram_pnl - telegram bot where users can run commands to backtest strategies</br>
 
