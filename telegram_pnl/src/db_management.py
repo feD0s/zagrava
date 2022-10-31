@@ -58,4 +58,8 @@ def get_table(tableName, log):
     except:
         df = []
         log.debug('No strategies has been found')
-    return df
+    finally:
+        if engine:
+            engine.close()
+            log.debug("PostgreSQL connection is closed")
+        return df

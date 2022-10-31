@@ -23,11 +23,10 @@ def get_exchange_client(exchange, log):
         sys.exit()
 
 
-def get_candlesDf(exchange, cfg: dict, windowSize: int) -> pd.DataFrame:
+def get_candlesDf(exchange, cfg: dict, windowSize: int, interval: float) -> pd.DataFrame:
     # used some code from: https://github.com/ccxt/ccxt/blob/master/examples/py/fetch-ohlcv-on-new-candle.py
     timeframe = cfg['timeframe']
     timeLimit = cfg['timeLimit']
-    interval = cfg['interval']
     symbol = cfg['symbol']
     try:
         since = exchange.round_timeframe(

@@ -39,7 +39,16 @@ services:
   telegram_pnl:
     container_name: telegram_pnl
     build: ./telegram_pnl
-    command: bash -c "python3 main.py"
+    environment:
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_PORT=${DB_PORT} 
+      - DB_IP=${DB_IP}
+      - TELEGRAM_API_TOKEN=${TELEGRAM_API_TOKEN}
+      - TELEGRAM_HANDLE=${TELEGRAM_HANDLE}
+      - TELEGRAM_DB_FILE=${TELEGRAM_DB_FILE}
+      - TELEGRAM_CURRENT_DIR=${TELEGRAM_CURRENT_DIR}
     depends_on:
       - db
     restart: always

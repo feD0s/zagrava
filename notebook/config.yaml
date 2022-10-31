@@ -1,0 +1,7 @@
+timeframe: 1m
+timeLimit: 300
+symbol: ETH/USDT
+comissionRate: 0.001
+riskFreeRate: 0
+tradingDaysCount: 365
+exchangeName: binance

@@ -14,11 +14,10 @@ from telegram import InlineKeyboardButton
 from telegram.ext import CommandHandler, Filters, MessageHandler, Updater
 
 import pnl_bot_persistence as persistence
+from analysis import get_maxDrawdown, get_sharpeRatio
 from db_management import check_table, get_table
-
-from .analysis import get_maxDrawdown, get_sharpeRatio
-from .exchange import get_candlesDf, get_exchange_client
-from .processing import get_pnlDf
+from exchange import get_candlesDf, get_exchange_client
+from processing import get_pnlDf
 
 # Set logger
 logging.basicConfig(
@@ -50,7 +49,7 @@ tradingDaysCount = cfg['tradingDaysCount']
 riskFreeRate = cfg['riskFreeRate']
 exchangeName = cfg['exchangeName']
 
-exchange = get_exchange_client(exchangeName)
+exchange = get_exchange_client(exchangeName, log)
 interval = exchange.parse_timeframe(timeframe) * 1000
 
 TELEGRAM_API_TOKEN = os.getenv('TELEGRAM_API_TOKEN')
@@ -188,45 +187,52 @@ def on_contact(update, context):
     logging.info("Admins: %s" % str(persistence.get_admin(TELEGRAM_DB_FILE)))
 
 
-def backtest(update, context, strategyName: str):
+def backtest(update, context):
     message_chat_id = update.message.chat_id
+    strategyName = context.args[0]
     tableName = 'strategy'
     if check_table(tableName, log):
         strategyDf = get_table(tableName, log)
+        strat = strategyDf[strategyDf['name'] == strategyName]
+        if strat.empty:
+            context.bot.send_message(
+                message_chat_id, text="Strategy not found")
+        else:
+            candlesDf = get_candlesDf(exchange, cfg, windowSize, interval)
+            pnlDf = get_pnlDf(strat, comissionRate, candlesDf)
+            annualizedSharpeRatio = get_sharpeRatio(
+                pnlDf, tradingDaysCount, riskFreeRate)
+            maxDrawdown = get_maxDrawdown(pnlDf)
+
+            pnlDf['updatetime'] = pd.to_datetime(
+                pnlDf['updatetime'], unit='ms')
+            pnlDf = pnlDf.set_index('updatetime')
+
+            fig, ax = mplt.subplots()
+            fig.set_size_inches(16, 9, forward=True)
+            ax.set_title(str(symbol) + ' PnL')
+            ax.plot(pnlDf.pnlFinal, color='cornflowerblue')
+            ax.set_ylabel('PnL')
+            ax.set_title(symbol+" PnL")
+            # добавляем текст справа сверху
+            box_text = ''
+            box_text += 'Sharpe Ratio: ' + \
+                str(round(annualizedSharpeRatio, 2)) + '\n'
+            box_text += 'Maximum Drawdown: ' + str(round(maxDrawdown)) + ' %'
+            ax.text(0.8, 0.95, box_text, transform=ax.transAxes, fontsize=10,
+                    verticalalignment='top')
+            # saving image
+            path = symbol.replace("/", "") + "_pnl.jpg"
+            mplt.savefig(path, bbox_inches='tight')
+            context.bot.send_photo(
+                chat_id=update.message.chat_id, photo=open(path, 'rb'))
+            # garbage collection
+            del candlesDf
+            del pnlDf
+            gc.collect()
     else:
         text = f'strategy table was not found'
         context.bot.send_message(message_chat_id, text=text)
-    strat = strategyDf[strategyDf['name'] == strategyName]
-    candlesDf = get_candlesDf(exchange, cfg, windowSize)
-    pnlDf = get_pnlDf(strat, comissionRate, candlesDf)
-    annualizedSharpeRatio = get_sharpeRatio(
-        pnlDf, tradingDaysCount, riskFreeRate)
-    maxDrawdown = get_maxDrawdown(pnlDf)
-
-    pnlDf['updatetime'] = pd.to_datetime(pnlDf['updatetime'], unit='ms')
-    pnlDf = pnlDf.set_index('updatetime')
-
-    fig, ax = mplt.subplots()
-    fig.set_size_inches(16, 9, forward=True)
-    ax.set_title(str(symbol) + ' PnL')
-    ax.plot(pnlDf.pnlFinal, color='cornflowerblue')
-    ax.set_ylabel('PnL')
-    ax.set_title(symbol+" PnL")
-    # добавляем текст справа сверху
-    box_text = ''
-    box_text += 'Sharpe Ratio: ' + str(round(annualizedSharpeRatio, 2)) + '\n'
-    box_text += 'Maximum Drawdown: ' + str(round(maxDrawdown)) + ' %'
-    ax.text(0.8, 0.95, box_text, transform=ax.transAxes, fontsize=10,
-            verticalalignment='top')
-    # saving image
-    path = symbol.replace("/", "") + "_pnl.jpg"
-    mplt.savefig(path, bbox_inches='tight')
-    context.bot.send_photo(
-        chat_id=update.message.chat_id, photo=open(path, 'rb'))
-    # garbage collection
-    del candlesDf
-    del pnlDf
-    gc.collect()
 
 
 dispatcher = updater.dispatcher
@@ -235,7 +241,7 @@ cmds = [
     ('lsadmins', 'List all admins.\n    /lsadmins', list_admins),
     ('rmadmin', 'Deletes an admin.\n    /rmadmin <id>', delete_admin),
     ('backtest', 'Backtests strategy with <strategy name>.\n    /backtest <strategy>', backtest),
-
+    ('help', 'Displays README.\n    /help', help_bot),
 ]
 
 

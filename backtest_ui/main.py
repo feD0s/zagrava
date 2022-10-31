@@ -28,16 +28,15 @@ def get_strategies():
 def create(strategy: SchemaStrategy):
     db_strategy = Strategy(
         name=strategy.name,
+        windowSize=strategy.windowSize,
         buyStakeSize=strategy.buyStakeSize,
-        buyWindowSize=strategy.buyWindowSize,
         buyBp=strategy.buyBp,
         buyCooldown=strategy.buyCooldown,
         buyMaxContracts=strategy.buyMaxContracts,
         sellStakeSize=strategy.sellStakeSize,
-        sellWindowSize=strategy.sellWindowSize,
         sellBp=strategy.sellBp,
         sellCooldown=strategy.sellCooldown,
-        sellMaxContracts=strategy.sellMaxContracts
+        sellMinContracts=strategy.sellMinContracts
     )
     db.session.add(db_strategy)
     db.session.commit()
@@ -58,16 +57,15 @@ def update(name: str, strategy: SchemaStrategy):
     if not db_strategy:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Strategy not found")
     db_strategy.name=strategy.name,
+    db_strategy.windowSize=strategy.windowSize,
     db_strategy.buyStakeSize=strategy.buyStakeSize,
-    db_strategy.buyWindowSize=strategy.buyWindowSize,
     db_strategy.buyBp=strategy.buyBp,
     db_strategy.buyCooldown=strategy.buyCooldown,
     db_strategy.buyMaxContracts=strategy.buyMaxContracts,
     db_strategy.sellStakeSize=strategy.sellStakeSize,
-    db_strategy.sellWindowSize=strategy.sellWindowSize,
     db_strategy.sellBp=strategy.sellBp,
     db_strategy.sellCooldown=strategy.sellCooldown,
-    db_strategy.sellMaxContracts=strategy.sellMaxContracts
+    db_strategy.sellMinContracts=strategy.sellMinContracts
     db.session.commit()
     return 'the strategy was updated successfully'
 

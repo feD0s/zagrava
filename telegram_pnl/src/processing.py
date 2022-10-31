@@ -8,14 +8,14 @@ hold = 30
 # https://www.tradingtechnologies.com/xtrader-help/fix-adapter-reference/pl-calculation-algorithm/understanding-pl-calculations/?cn-reloaded=1
 def get_pnlDf(strat: dict, comissionRate: float, candlesDf: pd.DataFrame) -> pd.DataFrame:
     """Returns two dataframes with pnl and trades based on the strategy parameters and candles dataframe"""
-    buyStakeSize = strat['buyStakeSize']
-    buyBp = strat['buyBp']
-    buyCooldown = strat['buyCooldown']
-    buyMaxContracts = strat['buyMaxContracts']
-    sellStakeSize = strat['sellStakeSize']
-    sellBp = strat['sellBp']
-    sellCooldown = strat['sellCooldown']
-    sellMinContracts = strat['sellMinContracts']
+    buyStakeSize = strat['buyStakeSize'].iloc[0]
+    buyBp = strat['buyBp'].iloc[0]
+    buyCooldown = strat['buyCooldown'].iloc[0]
+    buyMaxContracts = strat['buyMaxContracts'].iloc[0]
+    sellStakeSize = strat['sellStakeSize'].iloc[0]
+    sellBp = strat['sellBp'].iloc[0]
+    sellCooldown = strat['sellCooldown'].iloc[0]
+    sellMinContracts = strat['sellMinContracts'].iloc[0]
     lastBuyTradeTime = 0
     lastSellTradeTime = 0
     pnlRealized = 0

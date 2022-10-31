@@ -14,6 +14,8 @@ def get_sharpeRatio(pnlDf, tradingDaysCount, riskFreeRate):
 
 # function to calculate maximum drawdown in percent
 def get_maxDrawdown(pnlDf):
+    if pnlDf.pnlFinal.iloc[-1] == 0:
+        return 0
     pnlDf['drawdown'] = pnlDf['pnlFinal'].cummax() - pnlDf['pnlFinal']
     maxDrawdown = pnlDf['drawdown'].max()
     maxDrawdownPercent = maxDrawdown / pnlDf['pnlFinal'].cummax().max() * 100
