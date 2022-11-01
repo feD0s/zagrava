@@ -24,12 +24,6 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level='INFO')
 log = logging.getLogger('')
 
-# get strategy parameters
-with open("strategy.yaml", "r") as strategy:
-    try:
-        strat = yaml.safe_load(strategy)
-    except yaml.YAMLError as exc:
-        print(exc)
 
 # get config parameters
 with open("config.yaml", "r") as config:
@@ -40,9 +34,8 @@ with open("config.yaml", "r") as config:
 
 
 symbol = cfg['symbol']
-windowSize = strat['windowSize']
+
 # add windowSize to timeLimit to calculate ewma properly for given timeLimit
-timeLimit = cfg['timeLimit'] + windowSize
 timeframe = cfg['timeframe']
 comissionRate = cfg['comissionRate']
 tradingDaysCount = cfg['tradingDaysCount']
@@ -191,9 +184,11 @@ def backtest(update, context):
     message_chat_id = update.message.chat_id
     strategyName = context.args[0]
     tableName = 'strategy'
+    # check if table with strategies exists in database
     if check_table(tableName, log):
         strategyDf = get_table(tableName, log)
         strat = strategyDf[strategyDf['name'] == strategyName]
+        windowSize = strat['windowSize'].values[0]
         if strat.empty:
             context.bot.send_message(
                 message_chat_id, text="Strategy not found")
@@ -208,13 +203,14 @@ def backtest(update, context):
                 pnlDf['updatetime'], unit='ms')
             pnlDf = pnlDf.set_index('updatetime')
 
+            # plot pnl graph
             fig, ax = mplt.subplots()
             fig.set_size_inches(16, 9, forward=True)
             ax.set_title(str(symbol) + ' PnL')
             ax.plot(pnlDf.pnlFinal, color='cornflowerblue')
             ax.set_ylabel('PnL')
             ax.set_title(symbol+" PnL")
-            # добавляем текст справа сверху
+            # add text with sharpe ratio and maximum drawdown
             box_text = ''
             box_text += 'Sharpe Ratio: ' + \
                 str(round(annualizedSharpeRatio, 2)) + '\n'

@@ -26,7 +26,8 @@ def get_exchange_client(exchange, log):
 def get_candlesDf(exchange, cfg: dict, windowSize: int, interval: float) -> pd.DataFrame:
     # used some code from: https://github.com/ccxt/ccxt/blob/master/examples/py/fetch-ohlcv-on-new-candle.py
     timeframe = cfg['timeframe']
-    timeLimit = cfg['timeLimit']
+    # get candles for timelimit + windowSize period to calculate ema correctly for timelimit period
+    timeLimit = cfg['timeLimit'] + windowSize
     symbol = cfg['symbol']
     try:
         since = exchange.round_timeframe(
@@ -40,6 +41,6 @@ def get_candlesDf(exchange, cfg: dict, windowSize: int, interval: float) -> pd.D
         ohlcv, columns=['updatetime', 'open', 'high', 'low', 'close', 'volume'])
     candlesDf = candlesDf[['updatetime', 'close']]
     candlesDf['ma'] = candlesDf['close'].rolling(windowSize).mean()
-    # cut first windowSize rows to calculate ewma properly
+    # cut first windowSize rows because their MA is not calculated correctly
     candlesDf = candlesDf[windowSize:].reset_index(drop=True)
     return candlesDf

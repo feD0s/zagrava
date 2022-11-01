@@ -14,18 +14,18 @@ app = FastAPI()
 app.add_middleware(DBSessionMiddleware, db_url=os.environ["DATABASE_URL"])
 
 
-@app.get("/")
+@app.get("/api", tags=["main page"])
 async def root():
-    return {"message": "Welcome to the backtest API"}
+    return {"message": "Awesome Strategy Manager"}
 
 
-@app.get("/strategy/", response_model=List[SchemaStrategy], tags=["strategy"])
-def get_strategies():
+@app.get("/api/strategy", response_model=List[SchemaStrategy], tags=["strategy"])
+async def get_strategies():
     return db.session.query(Strategy).all()
 
 
-@app.post("/strategy/", response_model=SchemaStrategy, status_code=status.HTTP_201_CREATED, tags=["strategy"])
-def create(strategy: SchemaStrategy):
+@app.post("/api/strategy", response_model=SchemaStrategy, status_code=status.HTTP_201_CREATED, tags=["strategy"])
+async def create(strategy: SchemaStrategy):
     db_strategy = Strategy(
         name=strategy.name,
         windowSize=strategy.windowSize,
@@ -43,16 +43,16 @@ def create(strategy: SchemaStrategy):
     return db_strategy
 
 
-@app.get("/strategy/{name}", response_model=SchemaStrategy, status_code=status.HTTP_200_OK, tags=["strategy"])
-def retrieve(name: str):
+@app.get("/api/strategy/{name}", response_model=SchemaStrategy, status_code=status.HTTP_200_OK, tags=["strategy"])
+async def retrieve(name: str):
     strategy = db.session.query(Strategy).filter(Strategy.name == name).first()
     if not strategy:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Strategy not found")
     return strategy
 
 
-@app.put("/strategy/{name}", status_code=status.HTTP_200_OK, tags=["strategy"])
-def update(name: str, strategy: SchemaStrategy):
+@app.put("/api/strategy/{name}", status_code=status.HTTP_200_OK, tags=["strategy"])
+async def update(name: str, strategy: SchemaStrategy):
     db_strategy = db.session.query(Strategy).filter(Strategy.name == name).first()
     if not db_strategy:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Strategy not found")
@@ -69,8 +69,8 @@ def update(name: str, strategy: SchemaStrategy):
     db.session.commit()
     return 'the strategy was updated successfully'
 
-@app.delete('/strategy/{name}', status_code=status.HTTP_204_NO_CONTENT, tags=["strategy"])
-def delete(name: str):
+@app.delete('/api/strategy/{name}', status_code=status.HTTP_204_NO_CONTENT, tags=["strategy"])
+async def delete(name: str):
     strategy = db.session.query(Strategy).filter(Strategy.name == name).first()
     if not strategy:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Strategy not found")
