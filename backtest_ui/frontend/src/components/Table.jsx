@@ -10,6 +10,21 @@ const Table = () => {
   const [activeModal, setActiveModal] = useState(false);
   const [id, setId] = useState(null);
 
+  const handleDelete = async (name) => {
+    const requestOptions = {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    const response = await fetch(`/api/strategy/${name}`, requestOptions);
+    if (!response.ok) {
+      setErrorMessage("Strategy deletion failed");
+    }
+
+    getStrategies();
+  };
+
   const getStrategies = async () => {
     const requestOptions = {
       method: "GET",
@@ -86,7 +101,10 @@ const Table = () => {
                         <button className="button mr-2 is-info is-small is-light">
                           Update
                         </button>
-                        <button className="button mr-2 is-small is-danger is-light">
+                        <button
+                          className="button mr-2 is-small is-danger is-light"
+                          onClick={() => handleDelete(strategy.name)}
+                        >
                           Delete
                         </button>
                       </td>    
