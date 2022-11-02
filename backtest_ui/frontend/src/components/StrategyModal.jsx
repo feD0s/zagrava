@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const StrategyModal = ({ active, handleModal, id, setErrorMessage }) => {
     const [name, setName] = useState("");
@@ -11,6 +11,40 @@ const StrategyModal = ({ active, handleModal, id, setErrorMessage }) => {
     const [sellBp, setSellBp] = useState("");
     const [sellCooldown, setSellCooldown] = useState("");
     const [sellMinContracts, setSellMinContracts] = useState("");
+
+    useEffect(() => {
+      const getStrategy = async () => {
+        const requestOptions = {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        };
+        const response = await fetch(`/api/strategy/${id}`, requestOptions);
+
+        if (!response.ok) {
+          setErrorMessage("Couldn't fetch strategy");
+        } else {
+          const data = await response.json();
+          setName(data.name);
+          setWindowSize(data.windowSize);
+          setBuyStakeSize(data.buyStakeSize);
+          setBuyBp(data.buyBp);
+          setBuyCooldown(data.buyCooldown);
+          setBuyMaxContracts(data.buyMaxContracts);
+          setSellStakeSize(data.sellStakeSize);
+          setSellBp(data.sellBp);
+          setSellCooldown(data.sellCooldown);
+          setSellMinContracts(data.sellMinContracts);
+        }
+      };
+
+      if (id) {
+        getStrategy();
+      }
+    }, [id]);
+      
+
     const cleanformData = () => {
         setName("");
         setWindowSize("");
@@ -51,13 +85,14 @@ const StrategyModal = ({ active, handleModal, id, setErrorMessage }) => {
             handleModal();
         }
     };
+
     return (
       <div className={`modal ${active && "is-active"}`}>
         <div className="modal-background" onClick={handleModal}></div>
         <div className="modal-card">
           <header className="modal-card-head has-background-primary-light">
             <h1 className="modal-card-title">
-              {id ? "Update Strategy" : "Create Strategy"}
+              "Create Strategy"
             </h1>
           </header>
           <section className="modal-card-body">
@@ -195,15 +230,11 @@ const StrategyModal = ({ active, handleModal, id, setErrorMessage }) => {
             </form>
           </section>
             <footer className="modal-card-foot has-background-primary-light">
-              {id ? (
-                <button className="button is-info">Update</button>
-                ) : (
                 <button className="button is-primary" onClick={handleCreateStrategy}>
-                    Create
+                  Create
                 </button>
-                )}
                 <button className="button" onClick={handleModal}>
-                    Cancel
+                  Cancel
                 </button>
             </footer>
         </div>
