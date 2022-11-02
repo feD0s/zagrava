@@ -1,5 +1,5 @@
 timeframe: 1m
-timeLimit: 300
+timeLimit: 1440
 symbol: ETH/USDT
 comissionRate: 0.001
 riskFreeRate: 0

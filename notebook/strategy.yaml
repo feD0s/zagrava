@@ -1,9 +1,9 @@
 windowSize: 60
-buyStakeSize: 5
-buyBp: 20
+buyStakeSize: 1
+buyBp: 30
 buyCooldown: 10
-buyMaxContracts: 15
-sellStakeSize: 5
-sellBp: 20
+buyMaxContracts: 5
+sellStakeSize: 1
+sellBp: 30
 sellCooldown: 10
-sellMinContracts: -15
+sellMinContracts: -5
