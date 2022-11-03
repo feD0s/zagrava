@@ -22,4 +22,5 @@ After running docker-compose 4 counteiners will be built:<br/>
 ## 3. Backtesting workflow
 
 1) User runs web service and creates strategies</br>
+![alt text](https://github.com/feD0s/zagrava/edit/main/fastapi.png?raw=true)
 2) User runs telegram bot and backtests created strategies 
