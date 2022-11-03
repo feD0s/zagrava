@@ -23,5 +23,6 @@ After running docker-compose 4 counteiners will be built:<br/>
 
 1) User runs web service and creates strategies</br>
    ![fastAPI Swagger UI](https://github.com/feD0s/zagrava/blob/main/fastapi.png?raw=true)
-   
+   ![React UI](https://github.com/feD0s/zagrava/blob/main/React%20UI.png?raw=true)
 3) User runs telegram bot and backtests created strategies 
+   ![telegram UI](https://github.com/feD0s/zagrava/blob/main/telegram%20UI.png?raw=true)
