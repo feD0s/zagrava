@@ -11,6 +11,8 @@ During this technical assignment you would need to design and implement a backte
 
 In 'notebook' folder there's file 'notebook.pynb' with simple solution. User strategy can be adjusted in 'strategy.yaml' and you also can change some parameters in 'config.yaml'.
 
+![Jupyter Notebook](https://github.com/feD0s/zagrava/blob/main/notebook/notebook.ipynb)
+
 ## 2. Service structure
 
 After running docker-compose 4 counteiners will be built:<br/>
