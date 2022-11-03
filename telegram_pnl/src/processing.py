@@ -1,8 +1,7 @@
 import pandas as pd
 
-msec = 1000
-minute = 60 * msec
-hold = 30
+MSEC = 1000
+MINUTE = 60 * MSEC
 
 # pnl calculation algorithm was taken from:
 # https://www.tradingtechnologies.com/xtrader-help/fix-adapter-reference/pl-calculation-algorithm/understanding-pl-calculations/?cn-reloaded=1
@@ -26,8 +25,10 @@ def get_pnlDf(strat: dict, comissionRate: float, candlesDf: pd.DataFrame) -> pd.
     pnlTotal = 0
     comissionTotal = 0
 
-    # create empty dataframe
-    pnlDf = pd.DataFrame(columns=['updatetime', 'close', 'pnlRealized',
+    # create empty dataframes
+    tradesDf = pd.DataFrame(columns=['updatetime', 'side', 'price', 'ma',
+                            'stakeSize', 'position', 'timeSinceLastTrade'])
+    pnlDf = pd.DataFrame(columns=['updatetime', 'close', 'ma', 'pnlRealized',
                          'pnlUnrealized', 'pnlTotal', 'comissionTotal', 'position', 'averageOpenPrice'])
 
     # for each candle calculate pnl and trades
@@ -35,10 +36,10 @@ def get_pnlDf(strat: dict, comissionRate: float, candlesDf: pd.DataFrame) -> pd.
         # of price is lower then ma, if position will not get grater then we specified and if cooldown is over
         if row['close'] * (1 + buyBp / 10000) < row['ma'] and \
                 position + buyStakeSize <= buyMaxContracts and \
-                row['updatetime'] - lastBuyTradeTime > buyCooldown * minute:
+                row['updatetime'] - lastBuyTradeTime > buyCooldown * MINUTE:
             # update lastBuyTradeTime and timeSinceLastBuyTrade
             timeSinceLastBuyTrade = (
-                row['updatetime'] - lastBuyTradeTime) / minute
+                row['updatetime'] - lastBuyTradeTime) / MINUTE
             lastBuyTradeTime = row['updatetime']
             # calculate comission
             comissionTotal += buyStakeSize * row['close'] * comissionRate
@@ -60,12 +61,21 @@ def get_pnlDf(strat: dict, comissionRate: float, candlesDf: pd.DataFrame) -> pd.
                     averageOpenPrice = 0
                 elif position > 0:
                     averageOpenPrice = row['close']
+            tradesDf = tradesDf.append({
+                'updatetime': row['updatetime'],
+                'side': 'buy',
+                'price': row['close'],
+                'ma': row['ma'],
+                'stakeSize': buyStakeSize,
+                'position': position,
+                'timeSinceLastTrade': timeSinceLastBuyTrade
+            }, ignore_index=True)
 
         elif row['close'] * (1 - sellBp / 10000) >= row['ma'] and \
                 position - sellStakeSize > sellMinContracts and \
-                row['updatetime'] - lastSellTradeTime > sellCooldown * minute:
+                row['updatetime'] - lastSellTradeTime > sellCooldown * MINUTE:
             timeSinceLastSellTrade = (
-                row['updatetime'] - lastSellTradeTime) / minute
+                row['updatetime'] - lastSellTradeTime) / MINUTE
             lastSellTradeTime = row['updatetime']
             # calculate comission
             comissionTotal += sellStakeSize * row['close'] * comissionRate
@@ -88,6 +98,15 @@ def get_pnlDf(strat: dict, comissionRate: float, candlesDf: pd.DataFrame) -> pd.
                     averageOpenPrice = 0
                 elif position < 0:
                     averageOpenPrice = row['close']
+            tradesDf = tradesDf.append({
+                'updatetime': row['updatetime'],
+                'side': 'sell',
+                'price': row['close'],
+                'ma': row['ma'],
+                'stakeSize': sellStakeSize,
+                'position': position,
+                'timeSinceLastTrade': timeSinceLastSellTrade
+            }, ignore_index=True)
         # update pnlUnrealized and pnlTotal for each candle
         pnlUnrealized = (row['close'] - averageOpenPrice) * position
         pnlTotal = pnlRealized + pnlUnrealized
@@ -95,6 +114,7 @@ def get_pnlDf(strat: dict, comissionRate: float, candlesDf: pd.DataFrame) -> pd.
         pnlDf = pnlDf.append({
             'updatetime': row['updatetime'],
             'close': row['close'],
+            'ma': row['ma'],
             'pnlRealized': pnlRealized,
             'pnlUnrealized': pnlUnrealized,
             'pnlTotal': pnlTotal,
@@ -104,4 +124,4 @@ def get_pnlDf(strat: dict, comissionRate: float, candlesDf: pd.DataFrame) -> pd.
         }, ignore_index=True)
     # add pnlFinal column which shows totalPnl with taking comission into account
     pnlDf['pnlFinal'] = pnlDf['pnlTotal'] - pnlDf['comissionTotal']
-    return pnlDf
+    return tradesDf, pnlDf

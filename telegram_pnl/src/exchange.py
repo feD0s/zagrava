@@ -4,9 +4,8 @@ import ccxt
 import pandas as pd
 from ccxt.base.decimal_to_precision import ROUND_UP
 
-msec = 1000
-minute = 60 * msec
-hold = 30
+MSEC = 1000
+MINUTE = 60 * MSEC
 
 
 def get_exchange_client(exchange, log):
@@ -36,10 +35,11 @@ def get_candlesDf(exchange, cfg: dict, windowSize: int, interval: float) -> pd.D
             "/", ""), timeframe, since=since, limit=timeLimit)
     except (ccxt.ExchangeError, ccxt.AuthenticationError, ccxt.ExchangeNotAvailable, ccxt.RequestTimeout) as error:
         print('Got an error', type(error).__name__, error.args)
-    # leave only updatetime and close price columns and calculate simple moving average
+    # leave only updatetime and close price columns
     candlesDf = pd.DataFrame(
         ohlcv, columns=['updatetime', 'open', 'high', 'low', 'close', 'volume'])
     candlesDf = candlesDf[['updatetime', 'close']]
+    # calculate simple moving average
     candlesDf['ma'] = candlesDf['close'].rolling(windowSize).mean()
     # cut first windowSize rows because their MA is not calculated correctly
     candlesDf = candlesDf[windowSize:].reset_index(drop=True)

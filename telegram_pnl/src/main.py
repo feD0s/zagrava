@@ -33,7 +33,7 @@ with open("config.yaml", "r") as config:
         print(exc)
 
 
-symbol = cfg['symbol']
+SYMBOL = cfg['symbol']
 
 # add windowSize to timeLimit to calculate ewma properly for given timeLimit
 timeframe = cfg['timeframe']
@@ -194,7 +194,7 @@ def backtest(update, context):
                 message_chat_id, text="Strategy not found")
         else:
             candlesDf = get_candlesDf(exchange, cfg, windowSize, interval)
-            pnlDf = get_pnlDf(strat, comissionRate, candlesDf)
+            tradesDf, pnlDf = get_pnlDf(strat, comissionRate, candlesDf)
             annualizedSharpeRatio = get_sharpeRatio(
                 pnlDf, tradingDaysCount, riskFreeRate)
             maxDrawdown = get_maxDrawdown(pnlDf)
@@ -206,10 +206,10 @@ def backtest(update, context):
             # plot pnl graph
             fig, ax = mplt.subplots()
             fig.set_size_inches(16, 9, forward=True)
-            ax.set_title(str(symbol) + ' PnL')
+            ax.set_title(str(SYMBOL) + ' PnL')
             ax.plot(pnlDf.pnlFinal, color='cornflowerblue')
             ax.set_ylabel('PnL')
-            ax.set_title(symbol+" PnL")
+            ax.set_title(SYMBOL+" PnL")
             # add text with sharpe ratio and maximum drawdown
             box_text = ''
             box_text += 'Sharpe Ratio: ' + \
@@ -218,12 +218,36 @@ def backtest(update, context):
             ax.text(0.8, 0.95, box_text, transform=ax.transAxes, fontsize=10,
                     verticalalignment='top')
             # saving image
-            path = symbol.replace("/", "") + "_pnl.jpg"
+            path = SYMBOL.replace("/", "") + "_pnl.jpg"
             mplt.savefig(path, bbox_inches='tight')
             context.bot.send_photo(
                 chat_id=update.message.chat_id, photo=open(path, 'rb'))
+
+            # plot trades graph
+            tradesDf['updatetime'] = pd.to_datetime(
+                tradesDf['updatetime'], unit='ms')
+            tradesDf = tradesDf.set_index('updatetime')
+            buyTradesDf = tradesDf[tradesDf.side == 'buy']
+            sellTradesDf = tradesDf[tradesDf.side == 'sell']
+
+            fig, ax = mplt.subplots()
+            fig.set_size_inches(16, 9, forward=True)
+            ax.set_title(str(SYMBOL) + ' Trades')
+            ax.plot(pnlDf.close, color='cornflowerblue')
+            ax.plot(pnlDf.ma, color='lightseagreen')
+            ax.set_ylabel('Trades')
+            ax.set_title(SYMBOL+" Trades")
+            ax.plot(buyTradesDf.price, 'o', color='green')
+            ax.plot(sellTradesDf.price, 'o', color='red')
+            # saving image
+            path = SYMBOL.replace("/", "") + "_trades.jpg"
+            mplt.savefig(path, bbox_inches='tight')
+            context.bot.send_photo(
+                chat_id=update.message.chat_id, photo=open(path, 'rb'))
+
             # garbage collection
             del candlesDf
+            del tradesDf
             del pnlDf
             gc.collect()
     else:

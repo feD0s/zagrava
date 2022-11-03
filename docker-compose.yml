@@ -24,17 +24,28 @@ services:
     depends_on:
       - db
 
-  backtest_ui:
-    container_name: backtest_ui
-    build: ./backtest_ui
+  backend:
+    container_name: backtest_api
+    build: ./backtest_ui/backend
     command: bash -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
     volumes:
-      - ./backtest_ui:/app
+      - ./backtest_api:/app
     ports:
       - 8000:8000
     depends_on:
       - db
     restart: always
+
+  frontend:
+    container_name: backtest_ui
+    build: ./backtest_ui/frontend
+    volumes:
+      - ./backtest_ui:/app
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend
+    stdin_open: true
 
   telegram_pnl:
     container_name: telegram_pnl
