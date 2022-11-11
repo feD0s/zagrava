@@ -11,15 +11,20 @@ During this technical assignment you would need to design and implement a backte
 
 In 'notebook' folder there's file 'notebook.pynb' with simple solution. User strategy can be adjusted in 'strategy.yaml' and you also can change some parameters in 'config.yaml'.
 
+![Jupyter Notebook](https://github.com/feD0s/zagrava/blob/main/notebook/notebook.ipynb)
+
 ## 2. Service structure
 
 After running docker-compose 4 counteiners will be built:<br/>
 1) postgresql_db - local postgres database for storing user strategies</br>
 2) pgadmin for viewing created tables</br>
-3) backtest_ui - web service where users can list, create, retrieve, update and delete user strategies. Service is made via FastAPI and React</br>
+3) backtest_ui - web service where users can create user strategies. Service is made via FastAPI and React</br>
 4) telegram_pnl - telegram bot where users can run commands to backtest strategies
 
 ## 3. Backtesting workflow
 
 1) User runs web service and creates strategies</br>
-2) User runs telegram bot and backtests created strategies 
+   ![fastAPI Swagger UI](https://github.com/feD0s/zagrava/blob/main/fastapi.png?raw=true)
+   ![React UI](https://github.com/feD0s/zagrava/blob/main/React%20UI.png?raw=true)
+3) User runs telegram bot and backtests created strategies 
+   ![telegram UI](https://github.com/feD0s/zagrava/blob/main/telegram%20UI.png?raw=true)
