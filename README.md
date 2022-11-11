@@ -15,11 +15,12 @@ In 'notebook' folder there's file 'notebook.pynb' with simple solution. User str
 
 ## 2. Service structure
 
-After running docker-compose 4 counteiners will be built:<br/>
+After running docker-compose 5 containers will be built:<br/>
 1) postgresql_db - local postgres database for storing user strategies</br>
 2) pgadmin for viewing created tables</br>
-3) backtest_ui - web service where users can create user strategies. Service is made via FastAPI and React</br>
-4) telegram_pnl - telegram bot where users can run commands to backtest strategies
+3) backtest_api - backend created via Fast API</br>
+4) backtest_ui - frontend UI where users can create strategies. Frontend was created via React</br>
+5) telegram_pnl - telegram bot where users can run commands to backtest strategies
 
 ## 3. Backtesting workflow
 
@@ -41,8 +42,8 @@ https://docs.docker.com/get-docker/
 ## 3. Run docker compose
 1) open folder "zagrava": cd zagrava</br>
 2) run docker compose: docker-compose up --build</br>
-Sometimes I got i/o errors while building docker compose. In this case I just run "docker-compose up --build" again.
-## 4. Migrate schemas to database
+Sometimes I had i/o errors while running docker compose. In this case I just run "docker-compose up --build" again.
+## 4. Migrate schemas to create database tables
 We need this action to create database tables.</br>
 1) open new terminal window and view all running containers: docker ps</br>
 2) copy containter ID of zagrava_backand image</br>
@@ -53,7 +54,7 @@ docker exec -it %CONTAINER_ID% alembic upgrade head</br>
 ### Frontend
 open http://127.0.0.1:3000/ to create or delete strategies</br>
 ### API Docs
-you can view API docs here in swagger format http://127.0.0.1:8000/docs or if you prefer Redoc: http://127.0.0.1:8000/redoc#tag/main-page</br>
+you can view API docs in swagger format http://127.0.0.1:8000/docs or if you prefer Redoc: http://127.0.0.1:8000/redoc</br>
 ### PG Admin
 To view created tables in pgadmin visit http://127.0.0.1:5050</br>
 login: fazarov@gmail.com</br>
