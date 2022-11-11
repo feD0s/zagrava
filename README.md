@@ -72,4 +72,4 @@ Now you can view created table "strategy" in Servers -> DB -> Databases -> Backt
 After you created strategy you can backtest it in telegram</br>
 1) Open telegram, find @zagrava_backtest_bot
 2) Type /start
-3) backtest %STRATEGY_NAME%
+3) Type /backtest %STRATEGY_NAME%
