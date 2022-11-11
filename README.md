@@ -40,7 +40,26 @@ https://docs.docker.com/get-docker/
 3) clone git repository - run command: git clone https://github.com/feD0s/zagrava.git
 ## 3. Run docker compose
 1) open folder "zagrava": cd zagrava</br>
-2) run docker compose: docker-compose run --build</br>
+2) run docker compose: docker-compose up --build</br>
 Sometimes I got i/o errors while building docker compose. In this case I just run "docker-compose up --build" again.
 ## 4. Migrate schemas to database
-1) open 
+We need this action to create database tables.</br>
+1) open new terminal window and view all running containers: docker ps</br>
+2) copy containter ID of zagrava_backand image</br>
+3) run commands to create tables:</br>
+docker exec -it %CONTAINER_ID% alembic revision --autogenerate -m "New Migration"</br>
+docker exec -it %CONTAINER_ID% alembic upgrade head</br>
+## 5. Using the service
+1) open http://127.0.0.1:3000/ to create or delete strategies</br>
+2) you can view API docs here in swagger format http://127.0.0.1:8000/docs or if you prefer Redoc: http://127.0.0.1:8000/redoc#tag/main-page</br>
+3) to view created tables in pgadmin visit http://127.0.0.1:5050</br>
+login: fazarov@gmail.com</br>
+password: admin</br>
+then connect to database: Object -> Register -> Server</br>
+General Tab: Name: db</br>
+Connection Tab: </br>
+Host name: db</br>
+Port: 5432</br>
+Maintenance database: backtest</br>
+Username: backtester</br>
+Password: backtester</br>
