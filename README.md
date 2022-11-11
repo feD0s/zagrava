@@ -50,9 +50,12 @@ We need this action to create database tables.</br>
 docker exec -it %CONTAINER_ID% alembic revision --autogenerate -m "New Migration"</br>
 docker exec -it %CONTAINER_ID% alembic upgrade head</br>
 ## 5. Using the service
-1) open http://127.0.0.1:3000/ to create or delete strategies</br>
-2) you can view API docs here in swagger format http://127.0.0.1:8000/docs or if you prefer Redoc: http://127.0.0.1:8000/redoc#tag/main-page</br>
-3) to view created tables in pgadmin visit http://127.0.0.1:5050</br>
+### Frontend
+open http://127.0.0.1:3000/ to create or delete strategies</br>
+### API Docs
+you can view API docs here in swagger format http://127.0.0.1:8000/docs or if you prefer Redoc: http://127.0.0.1:8000/redoc#tag/main-page</br>
+### PG Admin
+To view created tables in pgadmin visit http://127.0.0.1:5050</br>
 login: fazarov@gmail.com</br>
 password: admin</br>
 then connect to database: Object -> Register -> Server</br>
@@ -63,3 +66,9 @@ Port: 5432</br>
 Maintenance database: backtest</br>
 Username: backtester</br>
 Password: backtester</br>
+Now you can view created table "strategy" in Servers -> DB -> Databases -> Backtest -> Schemas -> public -> Tables</br>
+### Telegram backtesting
+After you created strategy you can backtest it in telegram</br>
+1) Open telegram, find @zagrava_backtest_bot
+2) Type /start
+3) backtest %STRAGEGY_NAME%
