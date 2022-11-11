@@ -28,3 +28,19 @@ After running docker-compose 4 counteiners will be built:<br/>
    ![React UI](https://github.com/feD0s/zagrava/blob/main/React%20UI.png?raw=true)
 3) User runs telegram bot and backtests created strategies 
    ![telegram UI](https://github.com/feD0s/zagrava/blob/main/telegram%20UI.png?raw=true)
+
+# How to run
+Disclamer: I removed .env files from .gitignore on purpose. I know that it's not secure but for this task I find it acceptable.
+## 1. Intall Docker
+To install docker on your system please follow official documentation:</br>
+https://docs.docker.com/get-docker/
+## 2. Clone git repository
+1) create empty folder</br>
+2) open folder in terminal</br>
+3) clone git repository - run command: git clone https://github.com/feD0s/zagrava.git
+## 3. Run docker compose
+1) open folder "zagrava": cd zagrava</br>
+2) run docker compose: docker-compose run --build</br>
+Sometimes I got i/o errors while building docker compose. In this case I just run "docker-compose up --build" again.
+## 4. Migrate schemas to database
+1) open 
